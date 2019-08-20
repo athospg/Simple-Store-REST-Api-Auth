@@ -16,3 +16,6 @@ class ItemTest(TestCase):
         self.assertEqual('test', item.name)
         self.assertEqual(13.99, item.price)
         self.assertEqual(3, item.store_id)
+
+    def test_item_json(self):
+        pass
