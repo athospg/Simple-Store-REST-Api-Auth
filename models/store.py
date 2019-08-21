@@ -9,3 +9,6 @@ class StoreModel(db.Model):
     name = db.Column(db.String(80))
 
     items = db.relationship('ItemModel', lazy='dynamic', cascade="all, delete-orphan")
+
+    def __init__(self, name):
+        self.name = name
