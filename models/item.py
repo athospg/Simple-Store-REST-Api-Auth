@@ -24,3 +24,7 @@ class ItemModel(db.Model):
             'price': self.price,
             'store_id': self.store_id
         }
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
