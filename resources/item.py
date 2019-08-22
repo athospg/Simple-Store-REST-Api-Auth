@@ -67,3 +67,8 @@ class Item(Resource):
             return {'message': 'Item deleted'}, 200
 
         return {'message': 'Item not in db'}, 400
+
+
+class ItemList(Resource):
+    def get(self):
+        pass
