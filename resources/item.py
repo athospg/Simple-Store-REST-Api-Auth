@@ -24,7 +24,7 @@ class Item(Resource):
         if item:
             return item.json(), 200
 
-        return {'message': 'Item not found'}, 404
+        return {'message': 'Item not found'}, 404  # Status code NOT FOUND
 
     def post(self, name):
         if ItemModel.find_by_name(name):
@@ -61,4 +61,9 @@ class Item(Resource):
         return item.json(), 200
 
     def delete(self, name):
-        pass
+        item = ItemModel.find_by_name(name)
+        if item:
+            item.delete_from_db()
+            return {'message': 'Item deleted'}, 200
+
+        return {'message': 'Item not in db'}, 400
