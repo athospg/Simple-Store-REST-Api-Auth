@@ -41,7 +41,24 @@ class Item(Resource):
         return item.json(), 201  # Status code CREATED
 
     def put(self, name):
-        pass
+        data = Item._parser.parse_args()
+        item = ItemModel.find_by_name(name)
+
+        if item is None:
+            item = ItemModel(name, **data)
+            try:
+                item.save_to_db()
+            except:
+                return {'message': 'An error occurred while inserting the item.'}, 500
+        else:
+            item.price = data['price']
+            item.store_id = data['store_id']
+            try:
+                item.save_to_db()
+            except:
+                return {'message': 'An error occurred while updating the item.'}, 500
+
+        return item.json(), 200
 
     def delete(self, name):
         pass
