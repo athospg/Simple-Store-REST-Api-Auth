@@ -11,7 +11,16 @@ class Store(Resource):
         return {'message': 'Store not found'}, 404
 
     def post(self, name):
-        pass
+        if StoreModel.find_by_name(name):
+            return {'message': "A store with name '{}' already exists.".format(name)}, 400
+
+        store = StoreModel(name)
+        try:
+            store.save_to_db()
+        except:
+            return {'message': 'An error occurred while creating the store.'}, 500
+
+        return store.json(), 201
 
     def put(self, name):
         pass
