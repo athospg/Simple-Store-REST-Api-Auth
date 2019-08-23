@@ -23,7 +23,9 @@ class Store(Resource):
         return store.json(), 201
 
     def put(self, name):
-        pass
+        # For now the Store has only an unique name and no other properties.
+        # TODO: Change this function when the Store has more properties.
+        return self.post(name)
 
     def delete(self, name):
         pass
