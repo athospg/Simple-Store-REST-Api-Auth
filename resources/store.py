@@ -34,3 +34,8 @@ class Store(Resource):
             return {'message': 'Store deleted'}, 200
 
         return {'message': 'Store not found'}, 404
+
+
+class StoreList(Resource):
+    def get(self):
+        pass
