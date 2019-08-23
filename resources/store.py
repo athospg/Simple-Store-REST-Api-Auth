@@ -28,4 +28,9 @@ class Store(Resource):
         return self.post(name)
 
     def delete(self, name):
-        pass
+        store = StoreModel.find_by_name(name)
+        if store:
+            store.delete_from_db()
+            return {'message': 'Store deleted'}, 200
+
+        return {'message': 'Store not found'}, 404
