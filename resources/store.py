@@ -38,4 +38,4 @@ class Store(Resource):
 
 class StoreList(Resource):
     def get(self):
-        pass
+        return {'stores': [store.json() for store in StoreModel.find_all()]}, 200
