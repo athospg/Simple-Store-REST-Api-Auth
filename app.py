@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import Api
 
-from resources.item import Item
-from resources.store import Store
+from resources.item import Item, ItemList
+from resources.store import Store, StoreList
 
 app = Flask(__name__)
 
@@ -16,9 +16,11 @@ api = Api(app)
 
 # Store related resources
 api.add_resource(Store, '/store/<string:name>')
+api.add_resource(StoreList, '/stores')
 
 # Item related resources
 api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
 
 
 @app.route('/')
