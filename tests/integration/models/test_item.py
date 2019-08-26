@@ -31,3 +31,16 @@ class ItemTest(BaseTest):
 
             # Verify
             self.assertIsNone(ItemModel.find_by_name('test'))
+
+    def test_store_relationship(self):
+        with self.app_context():
+            # Setup
+            store = StoreModel('Store 1')
+            item = ItemModel('test', 19.99, 1)
+
+            # Exercise
+            store.save_to_db()
+            item.save_to_db()
+
+            # Verify
+            self.assertEqual('Store 1', item.store.name)
