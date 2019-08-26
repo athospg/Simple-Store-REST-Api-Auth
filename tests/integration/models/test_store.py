@@ -1,3 +1,4 @@
+from models.item import ItemModel
 from models.store import StoreModel
 from tests.base_test import BaseTest
 
@@ -34,3 +35,17 @@ class StoreTest(BaseTest):
 
         self.assertListEqual([], store.items.all(),
                              "The store's items length was not 0 even though no items were added.")
+
+    def test_item_relationship(self):
+        with self.app_context():
+            # Setup
+            store = StoreModel('test')
+            item = ItemModel('Item A', 19.99, 1)
+
+            # Exercise
+            store.save_to_db()
+            item.save_to_db()
+
+            # Verify
+            self.assertEqual(1, store.items.count())
+            self.assertEqual('Item A', store.items.first().name)
