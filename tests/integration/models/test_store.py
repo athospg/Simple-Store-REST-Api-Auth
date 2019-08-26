@@ -28,3 +28,9 @@ class StoreTest(BaseTest):
 
             # Verify
             self.assertIsNone(StoreModel.find_by_name('test'))
+
+    def test_create_store_empty_items(self):
+        store = StoreModel('test')
+
+        self.assertListEqual([], store.items.all(),
+                             "The store's items length was not 0 even though no items were added.")
