@@ -7,6 +7,22 @@ from tests.base_test import BaseTest
 
 class StoreTest(BaseTest):
 
+    def test_create_store(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+
+                # Exercise
+                path = '/store/test'
+                resp = client.post(path)
+
+                # Verify
+                expected = {'id': 1, 'name': 'test', 'items': []}
+
+                self.assertEqual(201, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
+                self.assertIsNotNone(StoreModel.find_by_name('test'))
+
     def test_get_store_not_found(self):
         with self.app() as client:
             with self.app_context():
