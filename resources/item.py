@@ -50,6 +50,8 @@ class Item(Resource):
                 item.save_to_db()
             except:
                 return {'message': 'An error occurred while inserting the item.'}, 500
+
+            return item.json(), 201
         else:
             item.price = data['price']
             item.store_id = data['store_id']
