@@ -112,3 +112,20 @@ class ItemTest(BaseTest):
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
                 self.assertEqual(19.99, ItemModel.find_by_name('test').price)
+
+    def test_delete_item(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                StoreModel('test').save_to_db()
+                ItemModel('test', 19.99, 1).save_to_db()
+
+                # Exercise
+                path = '/item/test'
+                resp = client.delete(path)
+
+                # Verify
+                expected = {'message': 'Item deleted'}
+
+                self.assertEqual(200, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
