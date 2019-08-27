@@ -106,3 +106,21 @@ class StoreTest(BaseTest):
 
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
+
+    def test_get_store_list(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                StoreModel('Store A').save_to_db()
+                StoreModel('Store B').save_to_db()
+
+                # Exercise
+                path = '/stores'
+                resp = client.get(path)
+
+                # Verify
+                expected = {'stores': [
+                    {'id': 1, 'name': 'Store A', 'items': []},
+                    {'id': 2, 'name': 'Store B', 'items': []}
+                ]}
+                self.assertDictEqual(expected, json.loads(resp.data))
