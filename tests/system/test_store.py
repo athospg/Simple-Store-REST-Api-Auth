@@ -90,3 +90,19 @@ class StoreTest(BaseTest):
 
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
+
+    def test_delete_store(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                StoreModel('test').save_to_db()
+
+                # Exercise
+                path = '/store/test'
+                resp = client.delete(path)
+
+                # Verify
+                expected = {'message': 'Store deleted'}
+
+                self.assertEqual(200, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
