@@ -23,6 +23,22 @@ class StoreTest(BaseTest):
                 self.assertDictEqual(expected, json.loads(resp.data))
                 self.assertIsNotNone(StoreModel.find_by_name('test'))
 
+    def test_create_duplicate_store(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                StoreModel('test').save_to_db()
+
+                # Exercise
+                path = '/store/test'
+                resp = client.post(path)
+
+                # Verify
+                expected = {'message': "A store with name 'test' already exists."}
+
+                self.assertEqual(400, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
+
     def test_get_store_not_found(self):
         with self.app() as client:
             with self.app_context():
