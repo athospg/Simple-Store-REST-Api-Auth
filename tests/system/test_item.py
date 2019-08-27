@@ -129,3 +129,25 @@ class ItemTest(BaseTest):
 
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
+
+    def test_item_list(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                StoreModel('Store1').save_to_db()
+                ItemModel('Item1', 5.99, 1).save_to_db()
+                ItemModel('Item2', 1.99, 1).save_to_db()
+                StoreModel('Store2').save_to_db()
+                ItemModel('Item3', 9.99, 2).save_to_db()
+
+                # Exercise
+                path = '/items'
+                resp = client.get(path)
+
+                # Verify
+                expected = {'items': [
+                    {'id': 1, 'name': 'Item1', 'price': 5.99, 'store_id': 1},
+                    {'id': 2, 'name': 'Item2', 'price': 1.99, 'store_id': 1},
+                    {'id': 3, 'name': 'Item3', 'price': 9.99, 'store_id': 2}
+                ]}
+                self.assertDictEqual(expected, json.loads(resp.data))
