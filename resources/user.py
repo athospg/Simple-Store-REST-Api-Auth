@@ -1,9 +1,10 @@
 from flask_jwt_extended import (
     jwt_required, create_access_token, create_refresh_token, jwt_refresh_token_required, get_jwt_identity,
-    fresh_jwt_required
-)
+    fresh_jwt_required,
+    get_raw_jwt)
 from flask_restful import Resource, reqparse
 
+from blacklist import BLACKLIST
 from models.user import UserModel
 
 _user_parser = reqparse.RequestParser()
@@ -77,7 +78,14 @@ class User(Resource):
 
 
 class UserLogout(Resource):
-    pass
+    @jwt_required
+    def post(self):
+        # Every time a user logs in an unique 'JWT ID' is created.
+        # In order to logout the user we need to blacklist this id and not the
+        # 'USER ID', otherwise they wouldn't be able to login again.
+        jti = get_raw_jwt()['jti']
+        BLACKLIST.add(jti)
+        return {'message': 'Successfully logged out.'}, 200
 
 
 class TokenRefresh(Resource):
