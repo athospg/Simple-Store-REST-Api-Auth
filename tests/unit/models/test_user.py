@@ -13,3 +13,13 @@ class UserTest(TestCase):
         # Verify
         self.assertEqual('test', user.username)
         self.assertEqual('abcd', user.password)
+
+    def test_user_json(self):
+        # Setup
+
+        # Exercise
+        item = UserModel('test', 'abcd')
+
+        # Verify
+        expected = {'id': None, 'username': 'test'}
+        self.assertEqual(expected, item.json())
