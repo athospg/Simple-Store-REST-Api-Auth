@@ -1,12 +1,12 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import UserRegister, UserLogin
+from resources.user import UserRegister, UserLogin, User
 
 app = Flask(__name__)
 
@@ -24,6 +24,7 @@ jwt = JWTManager(app)
 # User related resources
 api.add_resource(UserRegister, '/register')
 api.add_resource(UserLogin, '/login')
+api.add_resource(User, '/user/<int:user_id>')
 
 # Store related resources
 api.add_resource(Store, '/store/<string:name>')

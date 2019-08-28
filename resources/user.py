@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
 from models.user import UserModel
@@ -55,7 +55,13 @@ class UserLogin(Resource):
 
 
 class User(Resource):
-    pass
+    @classmethod
+    @jwt_required
+    def get(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if user:
+            return user.json(), 200
+        return {'message': 'User not found'}, 404
 
 
 class UserLogout(Resource):
