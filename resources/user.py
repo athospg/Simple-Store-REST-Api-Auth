@@ -1,3 +1,4 @@
+from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
 from models.user import UserModel
@@ -31,7 +32,26 @@ class UserRegister(Resource):
 
 
 class UserLogin(Resource):
-    pass
+    @classmethod
+    def post(cls):
+        # get data from parser
+        data = _user_parser.parse_args()
+
+        # find user in database
+        user = UserModel.find_by_username(data['username'])
+
+        # check password
+        # create access token
+        # create refresh token
+        if user and user.password == data['password']:
+            access_token = create_access_token(identity=user.id, fresh=True)
+            refresh_token = create_refresh_token(identity=user.id)
+            return {
+                       'access_token': access_token,
+                       'refresh_token': refresh_token
+                   }, 200
+
+        return {'message': 'Invalid credentials'}, 401
 
 
 class User(Resource):
