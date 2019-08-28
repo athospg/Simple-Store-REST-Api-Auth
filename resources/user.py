@@ -63,6 +63,15 @@ class User(Resource):
             return user.json(), 200
         return {'message': 'User not found'}, 404
 
+    @classmethod
+    @jwt_required
+    def delete(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if user:
+            user.delete_from_db()
+            return {'message': 'User deleted'}, 200
+        return {'message': 'User not found'}, 404
+
 
 class UserLogout(Resource):
     pass
