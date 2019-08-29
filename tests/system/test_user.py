@@ -75,6 +75,23 @@ class UserNonLoggedTest(BaseTest):
                 self.assertIn('access_token', json.loads(auth_response.data).keys())
                 self.assertIn('refresh_token', json.loads(auth_response.data).keys())
 
+    def test_get_user(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                UserModel('test', '1234').save_to_db()
+
+                # Exercise
+                path = '/user/1'
+                response = client.get(path)
+
+                # Verify
+                expected = {'description': 'Request does not contain an access token.',
+                            'error': 'authorization_required'}
+
+                self.assertEqual(401, response.status_code)
+                self.assertDictEqual(expected, json.loads(response.data))
+
 
 class UserLoggedTest(BaseTest):
     pass
