@@ -126,3 +126,20 @@ class UserLoggedTest(BaseTest):
 
                 self.assertEqual(200, response.status_code)
                 self.assertDictEqual(expected, json.loads(response.data))
+
+    def test_refresh_token(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+
+                # Exercise
+                path = '/refresh'
+                headers = {'Authorization': self.refresh_token}
+                auth_response = client.post(path, headers=headers)
+
+                # Verify
+                self.assertIn('access_token', json.loads(auth_response.data).keys())
+
+                access_token = json.loads(auth_response.data)['access_token']
+
+                self.assertNotEqual(self.access_token, access_token)
