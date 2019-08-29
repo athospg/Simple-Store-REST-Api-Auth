@@ -93,6 +93,7 @@ class UserNonLoggedTest(BaseTest):
                 self.assertDictEqual(expected, json.loads(response.data))
 
 
+# noinspection DuplicatedCode
 class UserLoggedTest(BaseTest):
     def setUp(self):
         super(UserLoggedTest, self).setUp()

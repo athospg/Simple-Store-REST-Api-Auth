@@ -2,10 +2,28 @@ import json
 
 from models.item import ItemModel
 from models.store import StoreModel
+from models.user import UserModel
 from tests.base_test import BaseTest
 
 
+# noinspection DuplicatedCode
 class StoreTest(BaseTest):
+    def setUp(self):
+        super(StoreTest, self).setUp()
+        with self.app() as client:
+            with self.app_context():
+                UserModel('test', '1234').save_to_db()
+
+                path = '/login'
+                headers = {'Content-Type': 'application/json'}
+                data = json.dumps({'username': 'test', 'password': '1234'})
+                auth_request = client.post(path, headers=headers, data=data)
+
+                access_token = json.loads(auth_request.data)['access_token']
+                refresh_token = json.loads(auth_request.data)['refresh_token']
+
+                self.access_token = f'Bearer {access_token}'
+                self.refresh_token = f'Bearer {refresh_token}'
 
     def test_create_store(self):
         with self.app() as client:
@@ -14,7 +32,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/test'
-                resp = client.post(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.post(path, headers=headers)
 
                 # Verify
                 expected = {'id': 1, 'name': 'test', 'items': []}
@@ -31,7 +50,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/test'
-                resp = client.post(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.post(path, headers=headers)
 
                 # Verify
                 expected = {'message': "A store with name 'test' already exists."}
@@ -46,7 +66,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/test'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'message': 'Store not found'}
@@ -62,7 +83,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/test'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'id': 1, 'name': 'test', 'items': []}
@@ -79,7 +101,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/Store 1'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {
@@ -99,7 +122,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/store/test'
-                resp = client.delete(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.delete(path, headers=headers)
 
                 # Verify
                 expected = {'message': 'Store deleted'}
@@ -116,7 +140,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/stores'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'stores': [
@@ -137,7 +162,8 @@ class StoreTest(BaseTest):
 
                 # Exercise
                 path = '/stores'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'stores': [
