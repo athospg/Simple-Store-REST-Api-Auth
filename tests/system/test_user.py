@@ -41,6 +41,24 @@ class UserNonLoggedTest(BaseTest):
                 self.assertEqual(400, response.status_code)
                 self.assertDictEqual(expected, json.loads(response.data))
 
+    def test_login_user_wrong_credentials(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                UserModel('test', '1234').save_to_db()
+
+                # Exercise
+                path = '/login'
+                headers = {'Content-Type': 'application/json'}
+                data = json.dumps({'username': 'test', 'password': '4321'})
+                response = client.post(path, headers=headers, data=data)
+
+                # Verify
+                expected = {'message': 'Invalid credentials'}
+
+                self.assertEqual(401, response.status_code)
+                self.assertDictEqual(expected, json.loads(response.data))
+
 
 class UserLoggedTest(BaseTest):
     pass
