@@ -183,3 +183,19 @@ class UserLoggedTest(BaseTest):
 
                 self.assertEqual(200, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
+
+    def test_logout_user(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+
+                # Exercise
+                path = '/logout'
+                headers = {'Authorization': self.access_token}
+                resp = client.post(path, headers=headers)
+
+                # Verify
+                expected = {'message': 'Successfully logged out.'}
+
+                self.assertEqual(200, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
