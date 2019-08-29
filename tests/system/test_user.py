@@ -167,3 +167,19 @@ class UserLoggedTest(BaseTest):
 
                 self.assertEqual(401, resp.status_code)
                 self.assertDictEqual(expected, json.loads(resp.data))
+
+    def test_delete_user(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+
+                # Exercise
+                path = '/user/1'
+                headers = {'Authorization': self.access_token}
+                resp = client.delete(path, headers=headers)
+
+                # Verify
+                expected = {'message': 'User deleted'}
+
+                self.assertEqual(200, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
