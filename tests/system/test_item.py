@@ -2,11 +2,28 @@ import json
 
 from models.item import ItemModel
 from models.store import StoreModel
+from models.user import UserModel
 from tests.base_test import BaseTest
 
 
 # noinspection DuplicatedCode
 class ItemTest(BaseTest):
+    def setUp(self):
+        super(ItemTest, self).setUp()
+        with self.app() as client:
+            with self.app_context():
+                UserModel('test', '1234').save_to_db()
+
+                path = '/login'
+                headers = {'Content-Type': 'application/json'}
+                data = json.dumps({'username': 'test', 'password': '1234'})
+                auth_request = client.post(path, headers=headers, data=data)
+
+                access_token = json.loads(auth_request.data)['access_token']
+                refresh_token = json.loads(auth_request.data)['refresh_token']
+
+                self.access_token = f'Bearer {access_token}'
+                self.refresh_token = f'Bearer {refresh_token}'
 
     def test_get_item_not_found(self):
         with self.app() as client:
@@ -15,7 +32,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 self.assertEqual(404, resp.status_code)
@@ -29,7 +47,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'id': 1, 'name': 'test', 'price': 19.99, 'store_id': 1}
@@ -45,7 +64,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                headers = {'Content-Type': 'application/json'}
+                headers = {'Content-Type': 'application/json',
+                           'Authorization': self.access_token}
                 data = json.dumps({'price': 17.99, 'store_id': 1})
                 resp = client.post(path, headers=headers, data=data)
 
@@ -64,7 +84,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                headers = {'Content-Type': 'application/json'}
+                headers = {'Content-Type': 'application/json',
+                           'Authorization': self.access_token}
                 data = json.dumps({'price': 17.99, 'store_id': 1})
                 resp = client.post(path, headers=headers, data=data)
 
@@ -82,7 +103,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                headers = {'Content-Type': 'application/json'}
+                headers = {'Content-Type': 'application/json',
+                           'Authorization': self.access_token}
                 data = json.dumps({'price': 17.99, 'store_id': 1})
                 resp = client.put(path, headers=headers, data=data)
 
@@ -102,7 +124,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                headers = {'Content-Type': 'application/json'}
+                headers = {'Content-Type': 'application/json',
+                           'Authorization': self.access_token}
                 data = json.dumps({'price': 19.99, 'store_id': 1})
                 resp = client.put(path, headers=headers, data=data)
 
@@ -122,7 +145,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/item/test'
-                resp = client.delete(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.delete(path, headers=headers)
 
                 # Verify
                 expected = {'message': 'Item deleted'}
@@ -142,7 +166,8 @@ class ItemTest(BaseTest):
 
                 # Exercise
                 path = '/items'
-                resp = client.get(path)
+                headers = {'Authorization': self.access_token}
+                resp = client.get(path, headers=headers)
 
                 # Verify
                 expected = {'items': [
