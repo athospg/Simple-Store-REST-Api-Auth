@@ -59,6 +59,22 @@ class UserNonLoggedTest(BaseTest):
                 self.assertEqual(401, response.status_code)
                 self.assertDictEqual(expected, json.loads(response.data))
 
+    def test_login_user(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                UserModel('test', '1234').save_to_db()
+
+                # Exercise
+                path = '/login'
+                headers = {'Content-Type': 'application/json'}
+                data = json.dumps({'username': 'test', 'password': '1234'})
+                auth_response = client.post(path, headers=headers, data=data)
+
+                # Verify
+                self.assertIn('access_token', json.loads(auth_response.data).keys())
+                self.assertIn('refresh_token', json.loads(auth_response.data).keys())
+
 
 class UserLoggedTest(BaseTest):
     pass
