@@ -143,3 +143,27 @@ class UserLoggedTest(BaseTest):
                 access_token = json.loads(auth_response.data)['access_token']
 
                 self.assertNotEqual(self.access_token, access_token)
+
+    def test_delete_user_without_fresh(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                auth_request = client.post(
+                    '/refresh',
+                    headers={'Authorization': self.refresh_token}
+                )
+                access_token = json.loads(auth_request.data)['access_token']
+
+                # Exercise
+                path = '/user/1'
+                headers = {'Authorization': f'Bearer {access_token}'}
+                resp = client.delete(path, headers=headers)
+
+                # Verify
+                expected = {
+                    'description': 'The token is not fresh.',
+                    'error': 'fresh_token_required'
+                }
+
+                self.assertEqual(401, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
