@@ -94,4 +94,19 @@ class UserNonLoggedTest(BaseTest):
 
 
 class UserLoggedTest(BaseTest):
-    pass
+    def setUp(self):
+        super(UserLoggedTest, self).setUp()
+        with self.app() as client:
+            with self.app_context():
+                UserModel('test', '1234').save_to_db()
+
+                path = '/login'
+                headers = {'Content-Type': 'application/json'}
+                data = json.dumps({'username': 'test', 'password': '1234'})
+                auth_request = client.post(path, headers=headers, data=data)
+
+                access_token = json.loads(auth_request.data)['access_token']
+                refresh_token = json.loads(auth_request.data)['refresh_token']
+
+                self.access_token = f'Bearer {access_token}'
+                self.refresh_token = f'Bearer {refresh_token}'
