@@ -110,3 +110,19 @@ class UserLoggedTest(BaseTest):
 
                 self.access_token = f'Bearer {access_token}'
                 self.refresh_token = f'Bearer {refresh_token}'
+
+    def test_get_user(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+
+                # Exercise
+                path = '/user/1'
+                headers = {'Authorization': self.access_token}
+                response = client.get(path, headers=headers)
+
+                # Verify
+                expected = {'id': 1, 'username': 'test'}
+
+                self.assertEqual(200, response.status_code)
+                self.assertDictEqual(expected, json.loads(response.data))
