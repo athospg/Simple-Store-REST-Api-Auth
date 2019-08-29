@@ -148,6 +148,33 @@ class ItemTest(BaseTest):
                 self.assertDictEqual(expected, json.loads(resp.data))
                 self.assertEqual(19.99, ItemModel.find_by_name('test').price)
 
+    def test_delete_item_without_fresh(self):
+        with self.app() as client:
+            with self.app_context():
+                # Setup
+                auth_request = client.post(
+                    '/refresh',
+                    headers={'Authorization': self.refresh_token}
+                )
+                access_token = json.loads(auth_request.data)['access_token']
+
+                StoreModel('test').save_to_db()
+                ItemModel('test', 19.99, 1).save_to_db()
+
+                # Exercise
+                path = '/item/test'
+                headers = {'Authorization': f'Bearer {access_token}'}
+                resp = client.delete(path, headers=headers)
+
+                # Verify
+                expected = {
+                    'description': 'The token is not fresh.',
+                    'error': 'fresh_token_required'
+                }
+
+                self.assertEqual(401, resp.status_code)
+                self.assertDictEqual(expected, json.loads(resp.data))
+
     def test_delete_item(self):
         with self.app() as client:
             with self.app_context():
