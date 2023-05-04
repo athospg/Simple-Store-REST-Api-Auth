@@ -9,7 +9,7 @@ click==7.0                # via flask
 flask-jwt-extended==3.22.0
 flask-restful==0.3.7
 flask-sqlalchemy==2.4.0
-flask==1.1.1
+flask==2.2.5
 itsdangerous==1.1.0       # via flask
 jinja2==2.10.1            # via flask
 markupsafe==1.1.1         # via jinja2
